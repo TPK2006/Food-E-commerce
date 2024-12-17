@@ -1,0 +1,121 @@
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #4ecdc4;
+  --background-color: #f7f7f7;
+  --text-color: #333333;
+  --border-color: #dddddd;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.auth-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px var(--shadow-color);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+h1, h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #ff5252;
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.auth-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.auth-link a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+.terms-link {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+      padding: 1.5rem;
+  }
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CU Food Delivery</title>
+    <link rel="stylesheet" href="main_user_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="root">
+        <header class="header">
+            <div class="container header-content">
+                <div class="header-left">
+                    <img src="uploads/f598ee10179fe7a47ffea40ce625b21d.png" alt="Chandigarh University Logo" class="university-logo">
+                    <h1 class="logo">CU Food Delivery</h1>
+                    <div id="currentLocation" class="current-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Loading location...</span>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search food or restaurants" class="search-input">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                
+                <nav class="header-nav">
+                    <button class="btn btn-ghost" id="homeBtn">Home</button>
+                    <button class="btn btn-ghost" id="cartBtn">
+                        Cart
+                        <span id="cartBadge" class="cart-badge">0</span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <button class="btn btn-ghost profile-btn">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </button>
+                        <div class="dropdown-content">
+                            <h3 id="userName">John Doe</h3>
+                            <a href="#"><i class="fas fa-user-circle"></i> My Profile</a>
+                            <a href="#" id="addressBtn"><i class="fas fa-map-marker-alt"></i> Addresses</a>
+                            <a href="#"><i class="fas fa-utensils"></i> Your Orders</a>
+                            <a href="#"><i class="fas fa-truck"></i> Track Orders</a>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="homeView">
+                <section class="hero-section">
+                    <div class="hero-card">
+                        <div class="hero-content">
+                            <h2 class="hero-title">Delicious food at your doorstep!</h2>
+                            <p class="hero-subtitle">Get 20% off on your first order</p>
+                            <button class="btn btn-primary">Order Now</button>
+                        </div>
+                        <div class="slider">
+                            <img src="uploads/offers/coupon4.jpg" alt="Delicious Food" class="hero-image active">
+                            <img src="uploads/offers/coupon3.jpeg" alt="Delicious Offer 2" class="hero-image">
+                            <img src="uploads/offers/food-coupons1.jpg" alt="Delicious Offer 3" class="hero-image">
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="searchResults" class="search-results hidden">
+                    <h2 class="section-title">Your Search Results</h2>
+                    <div id="searchFoodResults" class="dishes-grid"></div>
+                </section>
+
+                <section class="nearby-restaurants">
+                    <h2 class="section-title">Nearby Restaurants</h2>
+                    <div class="restaurant-grid" id="restaurantGrid"></div>
+                </section>
+
+                <section class="popular-dishes">
+                    <h2 class="section-title">Popular Dishes</h2>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-category="all">All</button>
+                        <button class="tab-btn" data-category="Vegetarian">Vegetarian</button>
+                        <button class="tab-btn" data-category="Non-Vegetarian">Non-Vegetarian</button>
+                        <button class="tab-btn" data-category="Desserts">Desserts</button>
+                    </div>
+                    <div class="dishes-grid" id="dishesGrid"></div>
+                </section>
+            </div>
+
+            <div id="menuView" class="hidden">
+                <section class="restaurant-info">
+                    <h2 id="restaurantName">Restaurant Name</h2>
+                    <p id="restaurantCategory">Category</p>
+                </section>
+
+                <section id="foodItemDetails" class="food-item-details hidden">
+                    <!-- Food item details will be dynamically inserted here -->
+                </section>
+
+                <section class="menu-categories" id="categoryContainer">
+                    <!-- Category buttons will be dynamically inserted here -->
+                </section>
+
+                <section class="menu-items" id="menuItemsContainer">
+                    <!-- Menu items will be dynamically inserted here -->
+                </section>
+
+                <button class="btn btn-ghost" id="backToRestaurantsBtn">Back to Restaurants</button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">About Us</h3>
+                    <p class="footer-text">CU Food Delivery is the premier food delivery service for Chandigarh University students.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link">Terms of Service</a></li>
+                        <li><a href="#" class="footer-link">Contact Us</a></li>
+                        <li><a href="#" class="footer-link">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div id="addressModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Manage Addresses</h2>
+            <div id="addressList"></div>
+            <form id="addressForm">
+                <input type="text" id="addressInput" placeholder="Enter your address" required>
+                <button type="submit" class="btn btn-primary">Add Address</button>
+            </form>
+            <button id="useCurrentLocation" class="btn btn-secondary">Use Current Location</button>
+        </div>
+    </div>
+
+    <!-- Update Address Modal -->
+    <div id="updateAddressModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Update Address</h2>
+            <form id="updateAddressForm">
+                <input type="text" id="updateAddressInput" placeholder="Enter updated address" required>
+                <button type="submit" class="btn btn-primary">Update Address</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="main_user.js"></script>
+</body>
+</html>

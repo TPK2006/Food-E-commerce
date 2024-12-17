@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Owner Dashboard</title>
+    <link rel="stylesheet" href="Dashboard_styles.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp8rvcIPpc9Ty_LGZFWBwmY70hungX50&libraries=places"></script>
+    <style>
+        /* Existing styles */
+        .tab-content {
+            display: none;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tabs {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        #orders .card-content {
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+        }
+
+        /* New styles for sticky Recent Ready Orders */
+        #dashboard .recent-ready-orders {
+            position: relative;
+            height: calc(100vh - 400px); /* Adjust based on your layout */
+            overflow: hidden;
+        }
+
+        #dashboard .recent-ready-orders .card-header {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 5;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        #dashboard .recent-ready-orders .card-content {
+            height: calc(100% - 60px); /* Adjust based on your header height */
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-gray-100">
+        <!-- Header (unchanged) -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Restaurant Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="userMenuButton" class="relative h-8 w-8 rounded-full">
+                            <img src="/placeholder.svg?height=32&width=32" alt="Owner" class="h-8 w-8 rounded-full">
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="userMenuButton">
+                                <a href="#" id="profileLink" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
+                                <a href="#" id="logoutButton" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+                <button class="tab-button" data-tab="orders">Orders</button>
+                <button class="tab-button" data-tab="menu">Menu Management</button>
+                <button class="tab-button" data-tab="analytics">Analytics</button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pending Orders</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-2xl font-bold" id="pendingOrdersCount">0</div>
+                            <p class="text-xs text-muted-foreground">+2% from last hour</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Completed Orders</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-2xl font-bold" id="completedOrdersCount">0</div>
+                            <p class="text-xs text-muted-foreground">+15% from yesterday</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Revenue</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-2xl font-bold" id="totalRevenue">₹0.00</div>
+                            <p class="text-xs text-muted-foreground">+8% from last week</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Menu Items</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-2xl font-bold" id="menuItemsCount">0</div>
+                            <p class="text-xs text-muted-foreground">+3 new items this week</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card recent-ready-orders">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Ready Orders</h3>
+                    </div>
+                    <div class="card-content">
+                        <table id="recentOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Delivery Mode</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab (unchanged) -->
+            <div id="orders" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Orders</h3>
+                        <p class="card-description">View and manage your restaurant's orders.</p>
+                    </div>
+                    <div class="card-content">
+                        <div id="ordersList" class="space-y-4">
+                            <!-- Orders will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Management Tab (unchanged) -->
+            <div id="menu" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Menu Management</h3>
+                        <p class="card-description">Add, edit, or remove menu items.</p>
+                    </div>
+                    <div class="card-content">
+                        <div id="menuItems" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Add New Item</h3>
+                            </div>
+                            <div class="card-content">
+                                <form id="addMenuItemForm" enctype="multipart/form-data">
+                                    <div class="grid w-full items-center gap-4">
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="name">Name</label>
+                                            <input id="name" name="name" placeholder="Enter food item name" required>
+                                        </div>
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="price">Price</label>
+                                            <input id="price" name="price" type="number" step="0.01" placeholder="Enter price" required>
+                                        </div>
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="type">Type</label>
+                                            <select id="type" name="type" required>
+                                                <option value="">Select food type</option>
+                                                <option value="Veg">Vegetarian</option>
+                                                <option value="Non-Veg">Non-Vegetarian</option>
+                                                <option value="Beverage">Beverage</option>
+                                                <option value="Dessert">Dessert</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="description">Description</label>
+                                            <textarea id="description" name="description" placeholder="Enter item description"></textarea>
+                                        </div>
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="image">Image</label>
+                                            <input id="image" name="image" type="file" accept="image/*">
+                                        </div>
+                                        <div class="flex flex-col space-y-1.5">
+                                            <label for="estimatedPreparationTime">Estimated Preparation Time (minutes)</label>
+                                            <input id="estimatedPreparationTime" name="estimatedPreparationTime" type="number" min="1" placeholder="Enter estimated preparation time" required>
+                                        </div>
+                                        <div id="toppingsContainer">
+                                            <h4>Toppings</h4>
+                                            <div id="toppingsList"></div>
+                                            <button type="button" id="addToppingBtn" class="btn btn-secondary">Add Topping</button>
+                                        </div>
+                                        <div id="sizesContainer">
+                                            <h4>Sizes</h4>
+                                            <div id="sizesList"></div>
+                                            <button type="button" id="addSizeBtn" class="btn btn-secondary">Add Size</button>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mt-4">Add Item</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab (unchanged) -->
+            <div id="analytics" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Analytics</h3>
+                        <p class="card-description">View your restaurant's performance metrics.</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-2">Sales Overview</h3>
+                                <canvas id="salesChart" width="400" height="200"></canvas>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-2">Popular Items</h3>
+                                <table id="popularItemsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Total Sales</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-2">Customer Feedback</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span>Average Rating</span>
+                                        <span class="font-semibold" id="averageRating">0/5</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Total Reviews</span>
+                                        <span class="font-semibold" id="totalReviews">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        <!-- Profile Modal -->
+    <div id="profileModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Owner Profile</h2>
+            <form id="ownerProfileForm" enctype="multipart/form-data">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                    </div>
+                    <div>
+                        <label for="restaurantName">Restaurant Name</label>
+                        <input type="text" id="restaurantName" name="restaurantName" required>
+                    </div>
+                    <div>
+                        <label for="ownerName">Owner Name</label>
+                        <input type="text" id="ownerName" name="ownerName" required>
+                    </div>
+                    <div>
+                        <label for="category">Category</label>
+                        <input type="text" id="category" name="category">
+                    </div>
+                    <div>
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address">
+                    </div>
+                    <div>
+                        <label for="landmark">Landmark</label>
+                        <input type="text" id="landmark" name="landmark">
+                    </div>
+                    <div>
+                        <label for="operatingHoursStart">Operating Hours Start</label>
+                        <input type="time" id="operatingHoursStart" name="operatingHoursStart">
+                    </div>
+                    <div>
+                        <label for="operatingHoursEnd">Operating Hours End</label>
+                        <input type="time" id="operatingHoursEnd" name="operatingHoursEnd">
+                    </div>
+                    <div>
+                        <label for="restaurantImage">Restaurant Image</label>
+                        <input type="file" id="restaurantImage" name="restaurantImage" accept="image/*">
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+                    <div>
+                        <label for="location">Restaurant Location</label>
+                        <div id="mapContainer">
+                            <div id="map" style="width: 100%; height: 300px;"></div>
+                            <input type="text" id="locationSearch" placeholder="Search for a location">
+                            <button type="button" id="chooseCurrentLocation" class="btn btn-secondary mt-2">Choose Current Location</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="latitude">Latitude</label>
+                        <input type="number" id="latitude" name="latitude" step="any" required readonly>
+                    </div>
+                    <div>
+                        <label for="longitude">Longitude</label>
+                        <input type="number" id="longitude" name="longitude" step="any" required readonly>
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold mt-6 mb-4">Payment Details</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="upiId">UPI ID</label>
+                        <input type="text" id="upiId" name="upiId" required>
+                    </div>
+                    <div>
+                        <label for="accountHolderName">Account Holder Name</label>
+                        <input type="text" id="accountHolderName" name="accountHolderName" required>
+                    </div>
+                    <div>
+                        <label for="bankName">Bank Name</label>
+                        <input type="text" id="bankName" name="bankName" required>
+                    </div>
+                    <div>
+                        <label for="accountNumber">Account Number</label>
+                        <input type="text" id="accountNumber" name="accountNumber" required>
+                    </div>
+                    <div>
+                        <label for="ifscCode">IFSC Code</label>
+                        <input type="text" id="ifscCode" name="ifscCode" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-6">Update Profile</button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+        <!-- Footer (unchanged) -->
+        <footer class="bg-white border-t mt-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2024 Restaurant Name. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <button class="btn btn-ghost btn-sm">Help & Support</button>
+                    <button class="btn btn-ghost btn-sm">Terms of Service</button>
+                    <button class="btn btn-ghost btn-sm">Contact Us</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="Dashbord.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

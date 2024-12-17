@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - CU Food Delivery</title>
+    <link rel="stylesheet" href="main_user_styles.css">
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="root">
+        <header class="header">
+            <div class="container header-content">
+                <div class="header-left">
+                    <img src="uploads/f598ee10179fe7a47ffea40ce625b21d.png" alt="Chandigarh University Logo" class="university-logo">
+                    <h1 class="logo">CU Food Delivery</h1>
+                </div>
+                <nav class="header-nav">
+                    <button class="btn btn-ghost" id="homeBtn">Home</button>
+                    <div class="profile-dropdown">
+                        <button class="btn btn-ghost profile-btn">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </button>
+                        <div class="dropdown-content">
+                            <h3 id="userName">John Doe</h3>
+                            <a href="#"><i class="fas fa-user-circle"></i> My Profile</a>
+                            <a href="#" id="addressBtn"><i class="fas fa-map-marker-alt"></i> Addresses</a>
+                            <a href="#"><i class="fas fa-utensils"></i> Your Orders</a>
+                            <a href="#"><i class="fas fa-truck"></i> Track Orders</a>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <h2 class="section-title">Your Cart</h2>
+                <div id="cartContent" class="cart-grid">
+                    <div id="cartItems" class="cart-items"></div>
+                    <div id="cartSummary" class="cart-summary">
+                        <h3>Order Details</h3>
+                        <div id="deliveryMode" class="form-group">
+                            <h4>Delivery Mode:</h4>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="deliveryOption" value="delivery" checked>
+                                    <span>Delivery</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="deliveryOption" value="pickup">
+                                    <span>Pickup</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="deliveryAddress" class="form-group">
+                            <h4>Delivery Address:</h4>
+                            <select id="addressSelect" class="form-control">
+                                <option value="">Select an address</option>
+                            </select>
+                            <div class="button-group">
+                                <button id="newAddressBtn" class="btn btn-secondary">Add New Address</button>
+                                <button id="useCurrentLocationBtn" class="btn btn-secondary">Use Current Location</button>
+                            </div>
+                        </div>
+                        <div id="contactNumber" class="form-group">
+                            <h4>Contact Number:</h4>
+                            <input type="tel" id="contactNumberInput" class="form-control" placeholder="Enter your contact number">
+                        </div>
+                        <div id="orderNotes" class="form-group">
+                            <h4>Order Notes:</h4>
+                            <textarea id="orderNotesInput" class="form-control" placeholder="Any special instructions?"></textarea>
+                        </div>
+                        <div id="preparationTime" class="form-group">
+                            <h4>Estimated Ready Time:</h4>
+                            <p id="estimatedReadyTime" class="highlight-text"></p>
+                            <div id="specificPickupTime" class="hidden">
+                                <h4>Specify Pickup Time:</h4>
+                                <input type="time" id="specificPickupTimeInput" class="form-control">
+                            </div>
+                            <div id="specificDeliveryTime" class="hidden">
+                                <h4>Specify Delivery Time:</h4>
+                                <input type="time" id="specificDeliveryTimeInput" class="form-control">
+                            </div>
+                        </div>
+                        <div id="orderSummary" class="order-summary">
+                            <h4>Order Summary:</h4>
+                            <div class="summary-item">
+                                <span>Subtotal:</span>
+                                <span>₹<span id="subtotal">0.00</span></span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Delivery Fee:</span>
+                                <span>₹<span id="deliveryFee">0.00</span></span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Total:</span>
+                                <span>₹<span id="total">0.00</span></span>
+                            </div>
+                        </div>
+                        <button id="checkoutBtn" class="btn btn-primary btn-block">Proceed to Checkout</button>
+                    </div>
+                </div>
+                <div id="cartEmptyMessage" class="hidden">
+                    <p>Your cart is empty. Add some delicious items!</p>
+                    <button id="continueShopping" class="btn btn-primary">Continue Shopping</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">About Us</h3>
+                    <p class="footer-text">CU Food Delivery is the premier food delivery service for Chandigarh University students.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link">Terms of Service</a></li>
+                        <li><a href="#" class="footer-link">Contact Us</a></li>
+                        <li><a href="#" class="footer-link">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="customizationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="customizationTitle">Customize Item</h2>
+            <form id="customizationForm">
+                <div id="sizeOptions" class="option-group"></div>
+                <div id="toppingOptions" class="option-group"></div>
+                <div class="form-group">
+                    <label for="additionalInstructions">Additional Instructions:</label>
+                    <textarea id="additionalInstructions" name="additionalInstructions" rows="3" placeholder="Any special requests?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Update Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="cart.js"></script>
+</body>
+</html>
+

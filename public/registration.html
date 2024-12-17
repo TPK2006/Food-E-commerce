@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusEats - Restaurant Owner Portal</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="15159336345-us0daubo1orr0vg8p6derco70i7t640m.apps.googleusercontent.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp8rvcIPpc9Ty_LGZFWBwmY70hungX50&libraries=places"></script>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <div id="auth-section" class="auth-section">
+            <div class="auth-content">
+                <div class="logo-container">
+                    <img src="/menu-images/f598ee10179fe7a47ffea40ce625b21d.png" alt="CampusEats Logo" class="logo">
+                </div>
+                <h1 class="main-title">CampusEats</h1>
+                <p class="subtitle">Restaurant Owner Portal</p>
+                <div class="tabs">
+                    <div class="tabs-list">
+                        <button type="button" class="tab-trigger active" data-tab="login">Login</button>
+                        <button type="button" class="tab-trigger" data-tab="signup">Sign Up</button>
+                    </div>
+                    <div class="tab-content active" id="login">
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="loginIdentifier">Email or Phone</label>
+                                <input type="text" id="loginIdentifier" required placeholder="Enter email or phone number">
+                            </div>
+                            <div class="form-group hidden" id="passwordField">
+                                <label for="loginPassword">Password</label>
+                                <input type="password" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Login</button>
+                        </form>
+                        <div class="google-signin-container">
+                            <div id="googleSignInButton" class="g-signin2" data-onsuccess="onSignIn"></div>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="signup">
+                        <p>Ready to join CampusEats?</p>
+                        <button id="getStartedBtn" class="btn-primary">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="registration-section" class="registration-section hidden">
+            <div class="registration-content">
+                <h1 class="main-title">Restaurant Owner Registration</h1>
+                <p class="subtitle">Register your restaurant to join CampusEats</p>
+                <form id="registrationForm">
+                    <div class="tabs">
+                        <div class="tabs-list">
+                            <button type="button" class="tab-trigger active" data-tab="restaurant-info">
+                                <i class="fas fa-utensils"></i> Restaurant Info
+                            </button>
+                            <button type="button" class="tab-trigger" data-tab="owner-details">
+                                <i class="fas fa-user"></i> Owner Details
+                            </button>
+                        </div>
+                        <div class="tab-content active" id="restaurant-info">
+                            <div class="form-group">
+                                <label for="restaurantName">Restaurant Name *</label>
+                                <input type="text" id="restaurantName" name="restaurantName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="restaurantLogo">Restaurant Logo/Image *</label>
+                                <input type="file" id="restaurantLogo" name="restaurantLogo" accept="image/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category/Type *</label>
+                                <input type="text" id="category" name="category" placeholder="e.g., Fast Food, Indian, Italian" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Restaurant Address *</label>
+                                <textarea id="address" name="address" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="landmark">Nearest Landmark *</label>
+                                <input type="text" id="landmark" name="landmark" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="operatingHours">Operating Hours</label>
+                                <div class="flex-row">
+                                    <input type="time" id="operatingHoursStart" name="operatingHoursStart" placeholder="Start Time">
+                                    <input type="time" id="operatingHoursEnd" name="operatingHoursEnd" placeholder="End Time">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Restaurant Location</label>
+                                <div id="mapContainer">
+                                    <div id="searchContainer">
+                                        <input type="text" id="locationSearch" placeholder="Search for a location">
+                                    </div>
+                                    <div id="map" style="width: 100%; height: 300px;"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="latitude">Latitude *</label>
+                                <input type="number" id="latitude" name="latitude" step="any" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude *</label>
+                                <input type="number" id="longitude" name="longitude" step="any" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="useCurrentLocation" class="btn-secondary">
+                                    <i class="fas fa-map-marker-alt"></i> Use Current Location
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="nextButton" class="btn-primary">
+                                    <i class="fas fa-arrow-right"></i> Next
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="owner-details">
+                            <div class="form-group">
+                                <label for="ownerName">Owner Name *</label>
+                                <input type="text" id="ownerName" name="ownerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Owner Contact Number *</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Owner Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password *</label>
+                                <input type="password" id="password" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password *</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="upiId">UPI ID *</label>
+                                <input type="text" id="upiId" name="upiId" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="accountHolderName">Account Holder Name *</label>
+                                <input type="text" id="accountHolderName" name="accountHolderName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="bankName">Bank Name *</label>
+                                <input type="text" id="bankName" name="bankName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="accountNumber">Account Number *</label>
+                                <input type="text" id="accountNumber" name="accountNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ifscCode">IFSC Code *</label>
+                                <input type="text" id="ifscCode" name="ifscCode" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Submit Registration
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+</body>
+</html>
+
